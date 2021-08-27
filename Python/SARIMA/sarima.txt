@@ -1,0 +1,17 @@
+(p, d, q) (P, D, Q) m
+
+p - AR red (kolko vrednosti nazaj)
+d - I (kolkokrat je treba odštet prejšnje vrednosti, da dobimo stacionarne podatke)
+q - MR red (kolko napak nazaj)
+P - sezonski AR
+D - sezonski I
+Q - sezonski MA
+m - v koliko vrednostih se ponovi sezonskost (365 * 24)
+
+AR - regresija iz prejšnih vrednosti
+MA - upoštevanje napak iz prejšnih vzorcev/napovedi glede na prave vrednosti
+
+metode za določanje parametrov:
+p - PACF
+d - ADF test
+q - ACF

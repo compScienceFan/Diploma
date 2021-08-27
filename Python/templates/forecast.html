@@ -1,0 +1,193 @@
+<!-- razsirja skeletni dokument -->
+{% extends "layout/base.html" %}
+
+<!-- block head ostane kot v skeletu "super()" -->
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+{{ super() }}
+{% endblock %}
+
+<!-- navigacija ista "super()" -->
+{% block navigation %}
+{{ super() }}
+{% endblock %}
+
+<!-- povozi vsebino -->
+{% block content %}
+<script>
+    var y1 = [];
+    var y2 = [];
+    var y3 = [];
+
+    function selectionChanged() {
+        var forecastIndex = $("#futureValueSelect").val();
+
+        var valueLSTM = y2[forecastIndex];
+        var indexSARIMA = Math.max(0, forecastIndex*24 - 1);
+        var valueSARIMA = y3[indexSARIMA];
+
+        $("#divLSTM").text(String(valueLSTM + "°C"));
+        $("#divSARIMA").text(String(valueSARIMA + "°C"));
+    }
+
+    $(document).ready(function(){
+        $(".active").removeClass("active");
+        $("#link-prediction").addClass("active");
+
+        $("#futureValueSelect").val("1");
+
+        var yString1 = {{temperatures|tojson}};
+        var yString2 = {{predictionLSTM|tojson}};
+        var yString3 = {{predictionSARIMA|tojson}};
+
+        yString1 = yString1.substring(1);
+        yString2 = yString2.substring(1);
+        yString3 = yString3.substring(1);
+
+        var _y1 = yString1.split(",");
+        var _y2 = yString2.split(",");
+        var _y3 = yString3.split(",");
+
+        _y1.forEach(function(el){
+            y1.push(parseFloat(el));
+        });
+        _y2.forEach(function(el){
+            y2.push(parseFloat(el));
+        });
+        _y3.forEach(function(el){
+            y3.push(parseFloat(el));
+        });
+
+        var coords1 = y1.map((val, i) => ({ x: -y1.length + i + 1, y: val}) );
+        var x2 = [1, 24, 48, 72, 96, 120]
+        var coords2 = y2.map((val, i) => ({ x: x2[i], y: val}) );
+        var coords3 = y3.map((val, i) => ({ x: i + 1, y: val}) );
+
+        var labels_x = [-5, 1, 24, 48, 72, 96, 120];
+        var labels = [-5, 1, 24, 48, 72, 96, 120];
+
+        // naslov, imena osi in zmanjsan prikaz imen na x osi, oblika pisave
+        var graphOptions = {
+            title: {
+                display: true,
+                text: "Celotna napoved temperature",
+                fontColor: "#292b2c",
+                fontSize: 18,
+                fontStyle: "bold"
+            },
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Temperatura [°C]",
+                        fontColor: "#292b2c",
+                        fontSize: 16
+                    },
+                    ticks: {
+                        fontColor: "#6c757d ",
+                        fontSize: 14
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Ure v prihodnosti",
+                        fontColor: "#292b2c",
+                        fontSize: 16
+                    },
+                    ticks: {
+                        fontColor: "#6c757d ",
+                        fontSize: 14,
+                        min: -5,
+                        max: 120,
+                        autoSkip: false,
+                        callback(value, index){
+                            return labels[index];
+                        }
+                    },
+                    afterBuildTicks(scale){
+                        return labels_x;
+                    }
+                }]
+            },
+
+            legend: {
+                labels: {
+                    fontColor: "#292b2c",
+                    fontSize: 14
+                }
+            }
+        }
+
+        var ctx = document.getElementById("myGraph");
+        ctx.height = 170;
+        var chart = new Chart(ctx, {
+            type: "scatter",
+            data: {
+                datasets: [{
+                    label: "Pretekle meritve",
+                    data: coords1,
+                    backgroundColor: "#5cb85c",
+                    showLine: true,
+                    fill: false
+                }, {
+                    label: "Napoved LSTM",
+                    data: coords2,
+                    backgroundColor: "#d9534f",
+                    pointRadius: 4,
+                    showLine: false
+                }, {
+                    label: "Napoved SARIMA",
+                    data: coords3,
+                    backgroundColor: "#0275d8",
+                    showLine: true,
+                    fill: false
+                }]
+            },
+
+            options: graphOptions
+        });
+
+        selectionChanged();
+    });
+</script>
+
+<canvas id="myGraph"></canvas>
+
+<div class="card mt-5">
+    <div class="card-header bg-light text-center">
+        <div class="row justify-content-around">
+            <div class="col-2"></div>
+            <div class="col-4 my-auto" style="font-weight: bold;">Specifičen termin napovedi:</div>
+            <div class="col-4 my-auto">
+                <select id="futureValueSelect" class="form-control" onchange="selectionChanged()">
+                    <option value="1">1 dan</option>
+                    <option value="0">1 ura</option>
+                    <option value="2">2 dneva</option>
+                    <option value="3">3 dnevi</option>
+                    <option value="4">4 dni</option>
+                    <option value="5">5 dni</option>
+                </select>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+    <div class="card-body text-center border">
+        <div class="row justify-content-around">
+            <div class="col-1"></div>
+            <div class="col-6 my-auto">Napoved temperature z nevronsko mrežo LSTM</div>
+            <div class="col-2 my-auto" id="divLSTM"></div>
+            <div class="col-3"></div>
+        </div>
+    </div>
+    <div class="card-body text-center border">
+        <div class="row justify-content-around">
+            <div class="col-1"></div>
+            <div class="col-6 my-auto">Napoved temperature s statistično metodo SARIMA</div>
+            <div class="col-2 my-auto" id="divSARIMA"></div>
+            <div class="col-3"></div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

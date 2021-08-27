@@ -1,0 +1,147 @@
+<!-- razsirja skeletni dokument -->
+{% extends "layout/base.html" %}
+
+<!-- block head ostane kot v skeletu "super()" -->
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+{{ super() }}
+{% endblock %}
+
+<!-- navigacija ista "super()" -->
+{% block navigation %}
+{{ super() }}
+{% endblock %}
+
+<!-- povozi vsebino -->
+{% block content %}
+<script>
+    $(document).ready(function(){
+        $(".active").removeClass("active");
+        $("#link-pastMeasurments").addClass("active");
+
+        // prenasanje iz template engina v js (potreben |tojson)
+        var xString = {{dates|tojson}};
+        var yString1 = {{temperatures|tojson}};
+        var yString2 = {{humidities|tojson}};
+
+        // odstani zacetni "[" (parseFloat javi NaN)
+        xString = xString.substring(1);
+        yString1 = yString1.substring(1);
+        yString2 = yString2.substring(1);
+
+        // regex | [^,]+ -> poljubno število znakov, ki niso vejica | , -> vejica | [^,]+ -> spet ne vejica | g -> vrni vse zadetke
+        //var x = xString.match(/[^,]+,[^,]+/g);
+        var x = xString.split(",");
+        var _y1 = yString1.split(",");
+        var _y2 = yString2.split(",");
+
+        var y1 = [];
+        var y2 = [];
+        _y1.forEach(function(el){
+            y1.push(parseFloat(el));
+        });
+        _y2.forEach(function(el){
+            y2.push(parseFloat(el));
+        });
+
+        // naslov, imena osi in zmanjsan prikaz imen na x osi, oblika pisave
+        var graphOptions = {
+            title: {
+                display: true,
+                text: "Grafična predstavitev meritev preteklih 48 ur",
+                fontColor: "#292b2c",
+                fontSize: 18,
+                fontStyle: "bold"
+            },
+            scales: {
+                yAxes: [{
+                    id: "1",
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Temperatura [°C]",
+                        fontColor: "#292b2c",
+                        fontSize: 16
+                    },
+                    ticks: {
+                        fontColor: "#6c757d ",
+                        fontSize: 14
+                    }
+                }, {
+                    id: "2",
+                    position: "right",
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Vlažnost [%]",
+                        fontColor: "#292b2c",
+                        fontSize: 16
+                    },
+                    ticks: {
+                        fontColor: "#6c757d ",
+                        fontSize: 14
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Datum in ura",
+                        fontColor: "#292b2c",
+                        fontSize: 16
+                    },
+                    ticks: {
+                        fontColor: "#6c757d ",
+                        fontSize: 14
+                    },
+                    afterTickToLabelConversion: function(data){
+                        var labels = data.ticks;
+                        var repetition = 6;
+                        for(var i = 0; i < labels.length; i++){
+                            if(i % 4 != 0){
+                                labels[i] = ""; // prazen label, pomeni preskoci na izrisu
+                            }                       
+                        }
+                    }
+                }]
+            },
+
+            legend: {
+                labels: {
+                    fontColor: "#292b2c",
+                    fontSize: 14
+                }
+            }
+        }
+
+        // chartjs graf
+        var ctx = document.getElementById("myGraph");
+        ctx.height = 170;
+        var chart = new Chart(ctx, {
+            type: "line",
+            data:{
+                labels: x,
+                datasets: [{
+                    label: "Temperatura",
+                    borderColor: "#d9534f",
+                    pointBackgroundColor: "#292b2c",
+                    pointRadius: 2,
+                    fill: false,
+                    yAxisID: '1',
+                    data: y1
+                }, {
+                    label: "Vlažnost",
+                    borderColor: "#0275d8",
+                    pointBackgroundColor: "#292b2c",
+                    pointRadius: 2,
+                    fill: false,
+                    
+                    yAxisID: '2',
+                    data: y2
+                }]
+            },
+
+            options: graphOptions
+        });
+    });
+</script>
+
+<canvas id="myGraph"></canvas>
+{% endblock %}

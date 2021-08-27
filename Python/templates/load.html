@@ -1,0 +1,45 @@
+<!-- razsirja skeletni dokument -->
+<!-- namenjen za loading screen, avtomatsko preusmeri na drugo stran -->
+{% extends "layout/base.html" %}
+
+<!-- block head ostane kot v skeletu "super()" -->
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+<!-- brez navigacije -->
+{% block navigation %}
+{% endblock %}
+
+<!-- povozi vsebino -->
+{% block content %}
+<script>
+    // preusmeritev
+    $(document).ready(function(){
+        window.location.replace("/napoved");
+    });
+</script>
+
+<div class="card mt-5">
+    <div class="card-header bg-light text-center">
+        Poteka procesiranje napovedi...
+    </div>
+    <div class="card-body text-center">
+        <div class="spinner-grow text-primary myStyle"></div>
+        <div class="spinner-grow text-primary myStyle"></div>
+        <div class="spinner-grow text-primary myStyle"></div>
+        <div class="spinner-grow text-primary myStyle"></div>
+        <div class="spinner-grow text-primary myStyle"></div>
+        <div class="spinner-grow text-primary myStyle"></div>
+        <div class="spinner-grow text-primary myStyle"></div>
+        <div class="spinner-grow text-primary myStyle"></div>
+    </div>
+</div>
+
+<style>
+    myStyle{
+        width: 4rem;
+        height: 4rem;
+    }
+</style>
+{% endblock %}

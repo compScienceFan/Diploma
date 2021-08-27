@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<!-- Skeletni layout za vse strani -->
+
+<html>
+    <head>
+        <!-- block pomeni, da bodo vsebine podale strani, ki ta dokument razsirjajo -->
+        {% block head %}
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Popper JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+        
+        <title>Pametna vremenska postaja</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta charset="utf-8">
+        {% endblock %}
+    </head>
+
+    <body>
+        {% block navigation %}
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+            <div class="navbar-brand mr-5">
+                Navigacija
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNav">
+                <ul class="navbar-nav nav nav-pills text-center">
+                    <li class="nav-item"><a class="nav-link active" id="link-home" href="/">Domov</a></li>
+                    <li class="nav-item"><a class="nav-link" id="link-prediction" href="/naloziNapoved">Napoved</a></li>
+                    <li class="nav-item"><a class="nav-link" id="link-pastMeasurments"  href="/pretekleMeritve">Pretekle meritve</a><li>
+                </ul>
+            </div>
+        </nav>
+        {% endblock %}
+
+        <div class="container">
+            {% block content %} {% endblock %}
+        </div>
+    </body>
+</html>

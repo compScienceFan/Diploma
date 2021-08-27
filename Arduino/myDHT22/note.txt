@@ -1,0 +1,3 @@
+To je moja lastna knjižnjica za DHT22 senzor!
+
+Kopija se nahaja na lokaciji C:\Users\Nejc\Documents\Arduino\libraries\myDHT22, kar je tudi privzeta pot za (linkanje) Arduinovih knjižnjice.

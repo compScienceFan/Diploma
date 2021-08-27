@@ -1,0 +1,78 @@
+<!-- razsirja skeletni dokument -->
+{% extends "layout/base.html" %}
+
+<!-- block head ostane kot v skeletu "super()" -->
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+<!-- navigacija ista "super()" -->
+{% block navigation %}
+{{ super() }}
+{% endblock %}
+
+<!-- povozi vsebino -->
+{% block content %}
+<script>
+    $(document).ready(function(){
+        $(".active").removeClass("active");
+        $("#link-home").addClass("active");
+    })
+</script>
+
+<div class="card mt-5">
+    <div class="card-header bg-primary text-white text-center">
+        <div class="row justify-content-center py-2">
+            <h3>Pametna vremenska postaja</h3>
+        </div>
+    </div>
+    <div class="card-body bg-light text-center">
+        {{date}}
+    </div>
+</div>
+<div class="card-deck mt-5">
+    <div class="card">
+        <div class="card-header">
+            <div class="row justify-content-around">
+                <div class="col-auto my-auto">Temperatura</div>
+                <div class="col-auto"><i class="bi-thermometer-half" style="font-size: 2rem; color: cornflowerblue;"></i></div>
+            </div>
+        </div>
+        <div class="card-body text-center">
+            {{temperature}}°C
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="row justify-content-around">
+                <div class="col-auto my-auto">Relativna vlaga</div>
+                <div class="col-auto"><i class="bi-droplet-half" style="font-size: 2rem; color: cornflowerblue;"></i></div>
+            </div>
+        </div>
+        <div class="card-body text-center">
+            {{humidity}}%
+        </div>
+    </div>
+</div>
+
+<div style="margin-top: 8rem">
+    <hr>
+    <dl class="row text-center">
+        <dt class="col-3">Domača stran</dt>
+        <dl class="col-9">Zadnje meritve temperature in vlažnosti</dl>
+
+        <dt class="col-3">Stran napoved</dt>
+        <dl class="col-9">Grafične in številske napovedi temperature za prihodnost</dl>
+
+        <dt class="col-3">Stran pretekle meritve</dt>
+        <dl class="col-9">Grafično predstavljenih nekaj zadnjih meritev</dl>
+    </dl>
+</div>
+
+<div class="container mt-5 flex px-3 py-24 md:flex-row flex-col items-center">
+    <span style="float: right;"><small>Avtor:</small><br>
+                                <small>Nejc Jeušnik</small></span>
+</div>
+   
+
+{% endblock %}

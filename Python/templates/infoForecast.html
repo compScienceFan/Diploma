@@ -1,0 +1,39 @@
+<!-- razsirja skeletni dokument -->
+{% extends "layout/base.html" %}
+
+<!-- block head ostane kot v skeletu "super()" -->
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+<!-- brez navigacije -->
+{% block navigation %}
+{% endblock %}
+
+<!-- povozi vsebino -->
+{% block content %}
+<script>
+    $(document).ready(function(){
+        $("#btnHome").click(function(){
+            window.location.replace("/");
+        })
+    });
+</script>
+
+<div class="card mt-5" >
+    <div class="card-header bg-primary text-white text-center">
+        <div class="row justify-content-around">
+            <div class="col-auto my-auto"><h4>Napaka</h4></div>
+            <div class="col-auto"><i class="bi bi-shield-fill-exclamation" style="font-size: 3rem; color: whitesmoke; vertical-align: 0.425em;"></i></div>
+        </div>
+    </div>
+    <div class="card-body bg-light text-center">
+       <p>Napoved ni mogoča, saj v bazi ni dovolj preteklih meritev ali so te manjkajoče.</p>
+    </div>
+</div>
+
+<div class="mt-5">
+    <button type="button" class="btn btn-outline-secondary btn" id="btnHome" ma>Nazaj na začetno stran</button>
+</div>
+
+{% endblock %}
